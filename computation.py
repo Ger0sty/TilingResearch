@@ -1,6 +1,7 @@
 from collections import deque
 import numpy as np
 import math
+from fractions import Fraction
 
 class Node:
     def __init__(self, row, label): 
@@ -209,6 +210,8 @@ class Tree:
 class Interface:
     def __init__(self, n, m, prime_parity = "NotPrime"):
         self.n = n
+        if (self.n > 9):
+            raise Exception("n cannot be greater than 9")
         self.m = m
         self.prime_parity = prime_parity
         self.a_tree = Tree("a", n, m)
@@ -646,14 +649,24 @@ class Interface:
         return self.matrix_composition
     
     def GetNumberTilings(self):
-        return np.dot(self.GetW() ,np.dot(self.GetMatrixComposition(), self.GetV()))
+        matrix_composition = self.GetMatrixComposition()
+        if (np.min(matrix_composition) < 0):
+            raise Exception("Overflow error")
+        return np.dot(self.GetW() ,np.dot(matrix_composition, self.GetV()))
     
     def GetLambdaMax(self):
-        eigenvalues = np.linalg.eig(self.GetMatrixComposition())[0]
+        matrix_composition = self.GetMatrixComposition()
+        if (np.min(matrix_composition) < 0):
+            raise Exception("Overflow error")
+        eigenvalues = np.linalg.eig(matrix_composition)[0]
         return max(eigenvalues)
+    
+    def GetWeightedLambdaMax(self):
+        fraction = Fraction('1/' + str(self.GetM()))
+        return self.GetLambdaMax() ** fraction
 
 
-interface = Interface(8, 8, "Prime")
+interface = Interface(9, 30, "Prime")
 #print(interface.GetACodes())
 #print(interface.GetAPrimeCodes())
 #print(interface.GetT())
@@ -661,5 +674,6 @@ interface = Interface(8, 8, "Prime")
 #print(interface.GetW())
 #print(interface.GetV())
 #print(interface.GetMatrixComposition())
-print(interface.GetNumberTilings())
-print(interface.GetLambdaMax())
+#print(interface.GetNumberTilings())
+#print(interface.GetLambdaMax())
+print(interface.GetWeightedLambdaMax())
