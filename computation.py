@@ -661,12 +661,11 @@ class Interface:
         eigenvalues = np.linalg.eig(matrix_composition)[0]
         return max(eigenvalues)
     
-    def GetWeightedLambdaMax(self):
-        fraction = Fraction('1/' + str(self.GetM()))
-        return self.GetLambdaMax() ** fraction
+    def GetEntropy(self):
+        return math.log(self.GetLambdaMax()) / self.GetN()
 
 
-interface = Interface(9, 30, "Prime")
+interface = Interface(9, 7, "Prime")
 #print(interface.GetACodes())
 #print(interface.GetAPrimeCodes())
 #print(interface.GetT())
@@ -676,4 +675,4 @@ interface = Interface(9, 30, "Prime")
 #print(interface.GetMatrixComposition())
 #print(interface.GetNumberTilings())
 #print(interface.GetLambdaMax())
-print(interface.GetWeightedLambdaMax())
+print(interface.GetEntropy())
